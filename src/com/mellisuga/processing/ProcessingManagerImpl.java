@@ -121,13 +121,37 @@ public class ProcessingManagerImpl implements IProcessingManager {
 		return myCreateProcess(name);
 	}
 	
-	public IProcess createProcess(String type,GroupDescription gd){
+	public IProcess createProcess(String type,Object data){
+			try{			
+		        if (!_processes.containsKey(type)){
+		        	System.out.println("'" + type + "'不在管理器中");
+			        return null;
+		        }
+		        IPMFactory factory = _processes.get(type);
+		        if (null == factory){
+		        	System.out.println("'" + type + "'所在工厂异常");
+		        	return null;
+		        }
+		  
+		        IProcess process = factory.createProcess(type,data);
+		        if (null != process){
+			        process.setid(ProcessingManagerImpl.makeUniqueId());
+			        return process;
+		        }
+	        }      
+	        catch (Exception e){
+	        	System.out.println("manager.createProcess: exception - " + e.getMessage());
+		        return null;
+	        }
+
+	        return null;		
+/*		
 		IProcess p = null;
 		if (type.equalsIgnoreCase("iterator")){
 			p = new ProcessIterator();
 			p.setInputValue("group", gd);
 		}
-		return null;
+		return null;*/
 	}
 	
 	public IConnector createConnector(String inParaType, String outParaType){

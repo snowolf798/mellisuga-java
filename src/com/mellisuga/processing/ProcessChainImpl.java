@@ -98,7 +98,7 @@ public class ProcessChainImpl implements IProcessChain {
 				error("chain.add:管理器为空");
 				return null;
 			}
-			IProcess p = _gpmanager.createProcess(name,(GroupDescription)data);
+			IProcess p = _gpmanager.createProcess(name,data);
 			if (null == p){
 				error("chain.create:创建'" + name + "'失败");
 				return null;

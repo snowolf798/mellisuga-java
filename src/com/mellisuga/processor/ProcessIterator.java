@@ -179,10 +179,10 @@ public class ProcessIterator extends ProcessBase {
 				com.alibaba.fastjson.JSONObject jvar = (com.alibaba.fastjson.JSONObject)obj;
 				if (jvar.containsKey("variables")){
 					
-				}
+				}//值列表
 				else{
 					varname = jvar.getString(_XMLTag.g_AttributionName);	
-				}				
+				}//数组迭代或JSON值迭代				
 			}
 			else if(obj instanceof com.alibaba.fastjson.JSONArray){
 				

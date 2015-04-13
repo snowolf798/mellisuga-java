@@ -93,7 +93,7 @@ public interface IProcessingManager {
 	 */
 	public IProcess createProcess(String name);
 	
-	public IProcess createProcess(String type,GroupDescription gd);
+	public IProcess createProcess(String type,Object data);
 	
 	/**
 	 * 根据指定的可以写入连接器的数据的数据类型和从连接器可以取出的数据的数据类型，创建一个连接器对象。

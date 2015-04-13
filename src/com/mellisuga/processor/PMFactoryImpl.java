@@ -75,6 +75,20 @@ public class PMFactoryImpl implements IPMFactory {
 	public IProcess createProcess(String name) {
 		return myCreateProcess(name);
 	}
+	
+	public IProcess createProcess(String type,Object data){
+		if (null == type || type.isEmpty()){
+			return null;
+		}
+		IProcess p = null;
+		if (type.equalsIgnoreCase("iterator")){
+			p = new ProcessIterator();
+			p.setInputValue("group", data);
+		}
+		
+		return p;
+	}
+	
 	private IProcess myCreateProcess(String name) {
 		if (null == name || name.isEmpty()){
 			return null;
@@ -122,6 +136,7 @@ public class PMFactoryImpl implements IPMFactory {
 			_proceses.add("JsonObjectCombiner");
 			_proceses.add("TwoJsonObjectCombiner");		
 			_proceses.add("Mellisuga.ModelRunner");
+			_proceses.add("iterator");
 		}
 		
 		if (null != _proceses)

@@ -107,9 +107,9 @@ public class PManagerImpl implements IProcessingManager {
 	}
 	
 	@Override
-	public IProcess createProcess(String type,GroupDescription gd){
+	public IProcess createProcess(String type,Object data){
 		try{			
-			return PManagerImpl.manager().createProcess(type,gd);
+			return PManagerImpl.manager().createProcess(type,data);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();

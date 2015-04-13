@@ -277,7 +277,7 @@ public class PMParserImpl implements IPMParser {
             			if (astr.equalsIgnoreCase("stepByStep") || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
             				continue;
             			}
-            			_properties.setProperty(astr, an.getNodeValue());
+            			_properties.setProperty(astr, xmlConversion(an.getNodeValue()));
             		}
             	}
                 
@@ -320,7 +320,7 @@ public class PMParserImpl implements IPMParser {
                 	element = (Element) (nodes.item(i));
                 	
                 	process = new ProcessDescription(element.getAttribute("name"),
-                			Integer.parseInt(element.getAttribute("id")), element.getAttribute("title"), element.getAttribute("abstracts"));
+                			Integer.parseInt(element.getAttribute("id")), xmlConversion(element.getAttribute("title")), xmlConversion(element.getAttribute("abstracts")));
                 	//解析扩展属性
                 	nnm = element.getAttributes();
                 	if (null != nnm){
@@ -330,7 +330,7 @@ public class PMParserImpl implements IPMParser {
                 			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
                 				continue;
                 			}
-                			process.setProperty(astr, an.getNodeValue());
+                			process.setProperty(astr, xmlConversion(an.getNodeValue()));
                 		}
                 	}
                 	
@@ -354,8 +354,8 @@ public class PMParserImpl implements IPMParser {
                     		}
                     	}
                     	else{                    		
-	                    	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), elePara.getAttribute(_XMLTag.g_AttributionType));
-	                    	para.setDataType(elePara.getAttribute(_XMLTag.g_AttributionType));
+	                    	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
+	                    	para.setDataType(xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
 	                    	
 	                    	String strType = para.getDataType();
 	    					if (null == strType || strType.isEmpty()){
@@ -371,7 +371,7 @@ public class PMParserImpl implements IPMParser {
 		    					strType = strs[0];
 	    					}
 	    					
-	                    	para.setValue(gpManager.createObject(strType, elePara.getAttribute("variable")));
+	                    	para.setValue(gpManager.createObject(strType, xmlConversion(elePara.getAttribute("variable"))));
 	                    	
 	                    	//解析扩展属性
 	                    	nnm = elePara.getAttributes();
@@ -382,7 +382,7 @@ public class PMParserImpl implements IPMParser {
 	                    			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
 	                    				continue;
 	                    			}
-	                    			para.setProperty(astr, an.getNodeValue());
+	                    			para.setProperty(astr, xmlConversion(an.getNodeValue()));
 	                    		}
 	                    	}
 	                    	inputs.add(para);
@@ -405,8 +405,8 @@ public class PMParserImpl implements IPMParser {
                     		continue;
                     	}
                          	
-                    	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), elePara.getAttribute(_XMLTag.g_AttributionType));
-	                    para.setDataType(elePara.getAttribute(_XMLTag.g_AttributionType));
+                    	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
+	                    para.setDataType(xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
 	                    	
 	                    String strType = para.getDataType();
 	    				if (null == strType || strType.isEmpty()){
@@ -431,7 +431,7 @@ public class PMParserImpl implements IPMParser {
 	                    		if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
 	                    			continue;
 	                    		}
-	                    		para.setProperty(astr, an.getNodeValue());
+	                    		para.setProperty(astr, xmlConversion(an.getNodeValue()));
 	                    	}
 	                    }
 	                    piArray.add(para);                    	
@@ -450,15 +450,15 @@ public class PMParserImpl implements IPMParser {
                 for (i = 0; i < nodes.getLength(); i++){
                 	element = (Element) (nodes.item(i));
                 	
-                	group = new GroupDescription(Integer.parseInt(element.getAttribute("id")),element.getAttribute("type"));
+                	group = new GroupDescription(Integer.parseInt(element.getAttribute("id")),xmlConversion(element.getAttribute("type")));
                 	if (element.hasAttribute(_XMLTag.g_AttributionName)){
                 		group.setName(element.getAttribute(_XMLTag.g_AttributionName));
                 	}
                 	if (element.hasAttribute(_XMLTag.g_AttributionTitle)){
-                		group.setTitle(element.getAttribute(_XMLTag.g_AttributionTitle));
+                		group.setTitle(xmlConversion(element.getAttribute(_XMLTag.g_AttributionTitle)));
                 	}
                 	if (element.hasAttribute(_XMLTag.g_AttributionAbstract)){
-                		group.setAbstracts(element.getAttribute(_XMLTag.g_AttributionAbstract));
+                		group.setAbstracts(xmlConversion(element.getAttribute(_XMLTag.g_AttributionAbstract)));
                 	}
                 	//解析扩展属性
                 	nnm = element.getAttributes();
@@ -469,7 +469,7 @@ public class PMParserImpl implements IPMParser {
                 			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
                 				continue;
                 			}
-                			group.setProperty(astr, an.getNodeValue());
+                			group.setProperty(astr, xmlConversion(an.getNodeValue()));
                 		}
                 	}
                 	
@@ -524,7 +524,7 @@ public class PMParserImpl implements IPMParser {
                     		if (astr.equalsIgnoreCase(_XMLTag.g_AttributionFrom) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTo)){
                     			continue;
                     		}
-                    		link.setProperty(astr, an.getNodeValue());
+                    		link.setProperty(astr, xmlConversion(an.getNodeValue()));
                     	}
                     }
                 	
@@ -544,7 +544,7 @@ public class PMParserImpl implements IPMParser {
                         	for (int m = 0; m < nnm.getLength(); ++m){
                         		org.w3c.dom.Node an = nnm.item(m);
                         		String astr = an.getNodeName();
-                        		assign.setProperty("from." + astr, an.getNodeValue());
+                        		assign.setProperty("from." + astr, xmlConversion(an.getNodeValue()));
                         	}
                         }
                         ftNode = (Element)(assignNode.getElementsByTagName(_XMLTag.g_NodeTo).item(0));
@@ -553,7 +553,7 @@ public class PMParserImpl implements IPMParser {
                         	for (int m = 0; m < nnm.getLength(); ++m){
                         		org.w3c.dom.Node an = nnm.item(m);
                         		String astr = an.getNodeName();
-                        		assign.setProperty("to." + astr, an.getNodeValue());
+                        		assign.setProperty("to." + astr, xmlConversion(an.getNodeValue()));
                         	}
                         }
                     	                    		
@@ -604,7 +604,7 @@ public class PMParserImpl implements IPMParser {
 			if (null == nodeTitle){
 				return;
 			}
-			this._title = nodeTitle.getTextContent();
+			this._title = xmlConversion(nodeTitle.getTextContent());
 
 			Element nodeAbstract = (Element)(nodeProcesshead.getElementsByTagName(_XMLTag.g_NodeAbstract).item(0));
 			if (null == nodeAbstract){
@@ -630,19 +630,19 @@ public class PMParserImpl implements IPMParser {
 				mpi.setName(node.getTextContent());
 				node = (Element)(nodeInput.getElementsByTagName(_XMLTag.g_NodeTitle).item(0));
 				if (null != node){
-					mpi.setTitle(node.getTextContent());	
+					mpi.setTitle(xmlConversion(node.getTextContent()));	
 				}
 				
 				node = (Element)(nodeInput.getElementsByTagName(_XMLTag.g_NodeAbstract).item(0));
 				if (null != node){
-					mpi.setAbstracts(node.getTextContent());
+					mpi.setAbstracts(xmlConversion(node.getTextContent()));
 				}
 				
 				node = (Element)(nodeInput.getElementsByTagName(_XMLTag.g_NodeDataType).item(0));
 				if (null == node){
 					continue;
 				}		 
-				mpi.setDataType(node.getTextContent());
+				mpi.setDataType(xmlConversion(node.getTextContent()));
 				
 				references = nodeInput.getElementsByTagName(_XMLTag.g_NodeReference);
 				if (null != references){
@@ -662,7 +662,7 @@ public class PMParserImpl implements IPMParser {
 	                			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
 	                				continue;
 	                			}
-	                			jitem.put(astr, an.getNodeValue());
+	                			jitem.put(astr, xmlConversion(an.getNodeValue()));
 	                		}
 	                		if (jitem.size() > 0){
 	                			jitem.put(_XMLTag.g_AttributionId, node.getAttribute(_XMLTag.g_AttributionId));
@@ -706,16 +706,16 @@ public class PMParserImpl implements IPMParser {
 	        	if (emt.hasAttribute(_XMLTag.g_AttributionName) && emt.hasAttribute(_XMLTag.g_Attribution_element)){                
 	        		com.alibaba.fastjson.JSONObject jsvar = new com.alibaba.fastjson.JSONObject();
 		        	jsvar.put(_XMLTag.g_AttributionName, emt.getAttribute(_XMLTag.g_AttributionName));
-		        	jsvar.put(_XMLTag.g_Attribution_element, emt.getAttribute(_XMLTag.g_Attribution_element));
+		        	jsvar.put(_XMLTag.g_Attribution_element, xmlConversion(emt.getAttribute(_XMLTag.g_Attribution_element)));
 		        	group.put("iterator", jsvar);
 		        	break;//应该只有一个吧，有多个了再修改;                    	
-		        }
+		        }//数组迭代或JSON值迭代
 	        	else if (emt.hasAttribute(_XMLTag.g_AttributionName) && emt.hasAttribute("part")){
 	        		com.alibaba.fastjson.JSONObject jsvar = new com.alibaba.fastjson.JSONObject();
 		        	jsvar.put(_XMLTag.g_AttributionName, emt.getAttribute(_XMLTag.g_AttributionName));
-		        	jsvar.put("part", emt.getAttribute("part"));
+		        	jsvar.put("part", xmlConversion(emt.getAttribute("part")));
 		        	jsa.add(jsvar);
-	        	}
+	        	}//部分值传递
 	        	else if(!emt.getTextContent().isEmpty()){
 	        		if (jvars.isEmpty()){
 	        			if (!vars.hasAttribute(_XMLTag.g_AttributionId) || !vars.hasAttribute(_XMLTag.g_AttributionName)){
@@ -724,8 +724,8 @@ public class PMParserImpl implements IPMParser {
 	        			jvars.put(_XMLTag.g_AttributionId, Integer.parseInt(vars.getAttribute(_XMLTag.g_AttributionId)));
 	        			jvars.put(_XMLTag.g_AttributionName, vars.getAttribute(_XMLTag.g_AttributionName));
 	        		}
-	        		jsa.add(emt.getTextContent());
-	        	}
+	        		jsa.add(xmlConversion(emt.getTextContent()));
+	        	}//值列表
 	        }
 	        if (jsa.size() > 0){
 	        	if (jvars.isEmpty()){
@@ -781,7 +781,7 @@ public class PMParserImpl implements IPMParser {
         	if (null == emt){                    		
         		continue;
         	}
-        	String strType = emt.getAttribute(_XMLTag.g_AttributionType);
+        	String strType = xmlConversion(emt.getAttribute(_XMLTag.g_AttributionType));
         	mpi = new MParaItem(emt.getAttribute(_XMLTag.g_AttributionName), strType);
             	
 			if (null == strType || strType.isEmpty()){
@@ -797,7 +797,7 @@ public class PMParserImpl implements IPMParser {
 				strType = strs[0];
 			}
 				
-			mpi.setValue(gpManager.createObject(strType, emt.getAttribute("variable")));
+			mpi.setValue(gpManager.createObject(strType, xmlConversion(emt.getAttribute("variable"))));
             	
             //解析扩展属性
             nnm = emt.getAttributes();
@@ -808,7 +808,7 @@ public class PMParserImpl implements IPMParser {
             		if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
             			continue;
             		}
-            		mpi.setProperty(astr, an.getNodeValue());
+            		mpi.setProperty(astr, xmlConversion(an.getNodeValue()));
             	}
             }
             
@@ -831,7 +831,7 @@ public class PMParserImpl implements IPMParser {
                 			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
                 				continue;
                 			}
-                			jitem.put(astr, an.getNodeValue());
+                			jitem.put(astr, xmlConversion(an.getNodeValue()));
                 		}
                 		if (jitem.size() > 0){
                 			jitem.put(_XMLTag.g_AttributionId, Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)));
@@ -866,7 +866,7 @@ public class PMParserImpl implements IPMParser {
         		continue;
         	}
              	
-        	String strType = emt.getAttribute(_XMLTag.g_AttributionType);
+        	String strType = xmlConversion(emt.getAttribute(_XMLTag.g_AttributionType));
         	para = new ParaItem(emt.getAttribute(_XMLTag.g_AttributionName), strType);
 			if (null == strType || strType.isEmpty()){
 				System.out.println("PMParser.Load:获取模型参数类型非法");
@@ -890,7 +890,7 @@ public class PMParserImpl implements IPMParser {
             		if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
             			continue;
             		}
-            		para.setProperty(astr, an.getNodeValue());
+            		para.setProperty(astr, xmlConversion(an.getNodeValue()));
             	}
             }
             piArray.add(para);                    	
@@ -924,7 +924,7 @@ public class PMParserImpl implements IPMParser {
         	element = (Element) (nodes.item(i));
         	
         	process = new ProcessDescription(element.getAttribute("name"),
-        			Integer.parseInt(element.getAttribute("id")), element.getAttribute("title"), element.getAttribute("abstracts"));
+        			Integer.parseInt(element.getAttribute("id")), xmlConversion(element.getAttribute("title")), xmlConversion(element.getAttribute("abstracts")));
         	//解析扩展属性
         	nnm = element.getAttributes();
         	if (null != nnm){
@@ -934,7 +934,7 @@ public class PMParserImpl implements IPMParser {
         			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
         				continue;
         			}
-        			process.setProperty(astr, an.getNodeValue());
+        			process.setProperty(astr, xmlConversion(an.getNodeValue()));
         		}
         	}
         	
@@ -958,8 +958,8 @@ public class PMParserImpl implements IPMParser {
             		}
             	}
             	else{                    		
-                	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), elePara.getAttribute(_XMLTag.g_AttributionType));
-                	para.setDataType(elePara.getAttribute(_XMLTag.g_AttributionType));
+                	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
+                	para.setDataType(xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
                 	
                 	String strType = para.getDataType();
 					if (null == strType || strType.isEmpty()){
@@ -975,7 +975,7 @@ public class PMParserImpl implements IPMParser {
     					strType = strs[0];
 					}
 					
-                	para.setValue(gpManager.createObject(strType, elePara.getAttribute("variable")));
+                	para.setValue(gpManager.createObject(strType, xmlConversion(elePara.getAttribute("variable"))));
                 	
                 	//解析扩展属性
                 	nnm = elePara.getAttributes();
@@ -986,7 +986,7 @@ public class PMParserImpl implements IPMParser {
                 			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
                 				continue;
                 			}
-                			para.setProperty(astr, an.getNodeValue());
+                			para.setProperty(astr, xmlConversion(an.getNodeValue()));
                 		}
                 	}
                 	inputs.add(para);
@@ -1009,8 +1009,8 @@ public class PMParserImpl implements IPMParser {
             		continue;
             	}
                  	
-            	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), elePara.getAttribute(_XMLTag.g_AttributionType));
-                para.setDataType(elePara.getAttribute(_XMLTag.g_AttributionType));
+            	para = new ParaItem(elePara.getAttribute(_XMLTag.g_AttributionName), xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
+                para.setDataType(xmlConversion(elePara.getAttribute(_XMLTag.g_AttributionType)));
                 	
                 String strType = para.getDataType();
 				if (null == strType || strType.isEmpty()){
@@ -1035,7 +1035,7 @@ public class PMParserImpl implements IPMParser {
                 		if (astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionType) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract) || astr.equalsIgnoreCase(_XMLTag.g_AttributionVariable)){
                 			continue;
                 		}
-                		para.setProperty(astr, an.getNodeValue());
+                		para.setProperty(astr, xmlConversion(an.getNodeValue()));
                 	}
                 }
                 piArray.add(para);                    	
@@ -1052,15 +1052,15 @@ public class PMParserImpl implements IPMParser {
         GroupDescription subgroup = null;
         for (i = 0; i < nodes.getLength(); i++){
         	element = (Element) (nodes.item(i));          	
-        	subgroup = new GroupDescription(Integer.parseInt(element.getAttribute("id")),element.getAttribute("type"));
+        	subgroup = new GroupDescription(Integer.parseInt(element.getAttribute("id")),xmlConversion(element.getAttribute("type")));
         	if (element.hasAttribute(_XMLTag.g_AttributionName)){
         		group.setName(element.getAttribute(_XMLTag.g_AttributionName));
         	}
         	if (element.hasAttribute(_XMLTag.g_AttributionTitle)){
-        		group.setTitle(element.getAttribute(_XMLTag.g_AttributionTitle));
+        		group.setTitle(xmlConversion(element.getAttribute(_XMLTag.g_AttributionTitle)));
         	}
         	if (element.hasAttribute(_XMLTag.g_AttributionAbstract)){
-        		group.setAbstracts(element.getAttribute(_XMLTag.g_AttributionAbstract));
+        		group.setAbstracts(xmlConversion(element.getAttribute(_XMLTag.g_AttributionAbstract)));
         	}
         	//解析扩展属性
         	nnm = element.getAttributes();
@@ -1071,7 +1071,7 @@ public class PMParserImpl implements IPMParser {
         			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
         				continue;
         			}
-        			group.setProperty(astr, an.getNodeValue());
+        			group.setProperty(astr, xmlConversion(an.getNodeValue()));
         		}
         	}
         	
@@ -1147,7 +1147,7 @@ public class PMParserImpl implements IPMParser {
                 	for (int m = 0; m < nnm.getLength(); ++m){
                 		org.w3c.dom.Node an = nnm.item(m);
                 		String astr = an.getNodeName();
-                		assign.setProperty("from." + astr, an.getNodeValue());
+                		assign.setProperty("from." + astr, xmlConversion(an.getNodeValue()));
                 	}
                 }
                 ftNode = (Element)(assignNode.getElementsByTagName(_XMLTag.g_NodeTo).item(0));
@@ -1156,7 +1156,7 @@ public class PMParserImpl implements IPMParser {
                 	for (int m = 0; m < nnm.getLength(); ++m){
                 		org.w3c.dom.Node an = nnm.item(m);
                 		String astr = an.getNodeName();
-                		assign.setProperty("to." + astr, an.getNodeValue());
+                		assign.setProperty("to." + astr, xmlConversion(an.getNodeValue()));
                 	}
                 }
             	                    		
@@ -1193,5 +1193,14 @@ public class PMParserImpl implements IPMParser {
 		}
 		
 		return null;
+	}
+
+	private String xmlConversion(String str){
+		str.replaceAll("&gt;", ">");
+		str.replaceAll("&lt;", "<");
+		str.replaceAll("&quot;", "\"");
+		str.replaceAll("&apos;", "'");
+		str.replaceAll("&amp;", "&");
+		return str;
 	}
 }
