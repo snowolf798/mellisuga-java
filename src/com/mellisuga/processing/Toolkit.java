@@ -102,6 +102,20 @@ public final class Toolkit {
 		return "";
 	}
 	
+	public static String getNodeType(INode n){
+		try{
+			if (null == n){
+				return "";
+			}			
+			ProcessDescription pd = (ProcessDescription)(n.getData());
+			return pd.getProperty("type");
+		}
+		catch(Exception ex){
+			ex.printStackTrace();		
+		}
+		return "";
+	}
+	
 	public static Map<String, String> getAssigns(IEdge e){
 		try{
 			if (null == e){

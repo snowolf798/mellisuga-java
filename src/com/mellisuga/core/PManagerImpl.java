@@ -21,6 +21,7 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 
 import com.mellisuga.processing.ConveyConnector;
+import com.mellisuga.processing.GroupDescription;
 import com.mellisuga.processing.IConnector;
 import com.mellisuga.processing.IPMDispatcher;
 import com.mellisuga.processing.IPMParser;
@@ -98,6 +99,17 @@ public class PManagerImpl implements IProcessingManager {
 	public IProcess createProcess(String name) {
 		try{			
 			return PManagerImpl.manager().createProcess(name);
+		}
+		catch(Exception ex) {
+			ex.printStackTrace();
+		}
+		return null;
+	}
+	
+	@Override
+	public IProcess createProcess(String type,GroupDescription gd){
+		try{			
+			return PManagerImpl.manager().createProcess(type,gd);
 		}
 		catch(Exception ex) {
 			ex.printStackTrace();

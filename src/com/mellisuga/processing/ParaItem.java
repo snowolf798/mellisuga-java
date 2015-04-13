@@ -17,7 +17,6 @@
  */
 package com.mellisuga.processing;
 
-import java.util.Map;
 
 /**
  * 数据处理构件的参数定义类<br>
@@ -28,13 +27,16 @@ import java.util.Map;
  * @version 1.0
  * @created 10-1-2008 21:09:40
  */
-public class ParaItem {
+public class ParaItem extends java.util.Properties {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private String _abstract = null;
 	private String _title = null;
 	private String _name = null;
 	private boolean _option = false;
-	private Map<String, String> _properties = null;
 	private String _type = null;
 	private Object _value = null;
 	private String _uiType = null;
@@ -151,26 +153,6 @@ public class ParaItem {
 	 */
 	public void setOption(boolean value){
 		this._option = value;
-	}
-
-	/**
-	 * 获取数据处理构件的参数的其他属性信息列表，包括其他属性的属性名称和对应的属性值。
-	 * @return 参数属性列表
-	 */
-	public Map<String, String> properties(){
-		return this._properties;
-	}
-
-	/**
-	 * 设置参数属性<br>
-	 * 
-	 * <p>ParaItem类是提供了数据处理构件的参数的名称、类型等基本信息的属性接口，如果用户在定义数据处理构件的参数时，需要为参数定义其他属性时，就可以通过该方法进行设置，包括给定参数的属性名称和属性值。
-	 * 
-	 * @param name 指定的参数的属性的属性名。
-	 * @param value 指定的属性值。
-	 */
-	public void setProperty(String name, String value){
-
 	}
 
 	/**

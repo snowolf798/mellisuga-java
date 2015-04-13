@@ -29,6 +29,23 @@ public class GroupDescription extends ProcessDescription {
 	private ArrayList<MParaItem> _outputs = null;
 	private ArrayList<LinkDescription> _links = null;
 	private ArrayList<ProcessDescription> _processes = null;
+	private String _type = "";
+	
+	/**
+	 * 
+	 * @param name
+	 * @param id
+	 * @param caption
+	 * @param description
+	 */
+	public GroupDescription(int id, String type){
+		this._type = type;
+		this.setId(id);
+	}
+	
+	public String getType(){
+		return _type;
+	}
 	
 	public void setInputs(MParaItem[] value){		
 		_inputs = new ArrayList<MParaItem>();		

@@ -21,9 +21,18 @@ import java.util.ArrayList;
 
 public class MParaItem extends ParaItem {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private ArrayList<Integer> _pid = new ArrayList<Integer>();	
 	private ArrayList<String> _processname = new ArrayList<String>();
 	private ArrayList<String> _paraname = new ArrayList<String>();
+	
+	public MParaItem(String name, String type){
+		this.setName(name);
+		this.setDataType(type);
+	}
 	
 	public ArrayList<Integer> getProcessIds(){
 		return this._pid;

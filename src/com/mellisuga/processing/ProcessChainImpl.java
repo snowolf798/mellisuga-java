@@ -87,6 +87,32 @@ public class ProcessChainImpl implements IProcessChain {
 	public IProcess addProcess(String name, int id){
 		return myAddProcess(name, id);
 	}
+	
+	public IProcess addProcess(String name, int id,Object data){
+		try{		
+			if (!(data instanceof GroupDescription)){
+				return null;
+			}
+			IProcessingManager _gpmanager = InstanceManager.getInstance().processingManager();
+			if (null == _gpmanager){
+				error("chain.add:管理器为空");
+				return null;
+			}
+			IProcess p = _gpmanager.createProcess(name,(GroupDescription)data);
+			if (null == p){
+				error("chain.create:创建'" + name + "'失败");
+				return null;
+			}
+			
+			p.setid(id);
+			_chainPool.add(p);
+			return p;
+		}
+		catch(Exception e){
+			error("chain.add: exception - " + e.getMessage());
+		}
+		return null;				
+	}
 
 	public boolean connectProcesses(IProcess prevProcess, IProcess backProcess, Map<String, String> keywords){
 		return myConnectProcesses(prevProcess, backProcess, keywords);

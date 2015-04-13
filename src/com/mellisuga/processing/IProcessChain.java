@@ -69,6 +69,8 @@ public interface IProcessChain extends IProcess {
 	 * @returns  返回创建并追加后的处理构件类对象。
 	 */
 	public IProcess addProcess(String name, int id);
+	
+	public IProcess addProcess(String name, int id,Object data);
 
 	/**
 	 * 建立处理链中两个数据处理构件类对象间的参数对应关系。该方法一次可以建立数据处理构件类对象间的多对参数对应关系。

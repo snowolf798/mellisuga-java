@@ -19,6 +19,7 @@ package com.mellisuga.processing;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import com.mellisuga.processor.ProcessIterator;
 import com.mellisuga.util.LicenseProvider;
 
 
@@ -118,6 +119,15 @@ public class ProcessingManagerImpl implements IProcessingManager {
 
 	public IProcess createProcess(String name){
 		return myCreateProcess(name);
+	}
+	
+	public IProcess createProcess(String type,GroupDescription gd){
+		IProcess p = null;
+		if (type.equalsIgnoreCase("iterator")){
+			p = new ProcessIterator();
+			p.setInputValue("group", gd);
+		}
+		return null;
 	}
 	
 	public IConnector createConnector(String inParaType, String outParaType){

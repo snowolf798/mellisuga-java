@@ -218,6 +218,9 @@ public class PMDispatcherImpl implements IPMDispatcher {
 				
 				p = chain.addProcess(Toolkit.getNodeName(n), n.getId());
 				if (null == p){
+					p = chain.addProcess(Toolkit.getNodeType(n), n.getId(),n.getData());
+				}
+				if (null == p){
 					return;
 					//continue;
 				}

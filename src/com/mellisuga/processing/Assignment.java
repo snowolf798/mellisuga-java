@@ -23,7 +23,7 @@ package com.mellisuga.processing;
  * @version 1.0
  * @created 10-1-2008 21:06:45
  */
-public class Assignment {
+public class Assignment  extends java.util.Properties {
 
 	/**	
 	 * 前一数据处理的输出参数类型		

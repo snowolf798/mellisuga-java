@@ -89,6 +89,8 @@ final class _XMLTag {
 	public static String g_AttributionTitle = "title";
 	public static String g_AttributionAbstract = "abstract";
 	public static String g_Attribution_operation = "operation";
+	public static String g_Attribution_type = "type";
+	public static String g_Attribution_element = "element";
 	
 	public static String g_NodeLinks = "links";
 	public static String g_NodeAssign = "assign";
