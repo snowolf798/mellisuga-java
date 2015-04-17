@@ -24,6 +24,11 @@ import com.mellisuga.processing.Toolkit;
 (3)数组迭代
 (4)JSON值迭代
 */
+/**
+ * @author snowolf798@gmail.com
+ * @version 1.0
+ * @created 1-29-2015
+ */
 public class ProcessIterator extends ProcessBase {
 	private GroupDescription _data = null;
 	//private ArrayList<IProcessChain> _chains = null;
@@ -257,12 +262,12 @@ public class ProcessIterator extends ProcessBase {
 				if (!(obj instanceof com.alibaba.fastjson.JSONArray)){
 					return false;
 				}
-				
+/*				
 				String str = jvar.getString("element");
 				if (!str.equalsIgnoreCase("..{value}")){
 					return false;
 				}
-
+*/
 				com.alibaba.fastjson.JSONArray ja = (com.alibaba.fastjson.JSONArray)obj;
 				for (i = 0; i < ja.size(); ++i){
 					iterobjs.add(ja.get(i));

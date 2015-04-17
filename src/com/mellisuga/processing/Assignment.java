@@ -25,6 +25,10 @@ package com.mellisuga.processing;
  */
 public class Assignment  extends java.util.Properties {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	/**	
 	 * 前一数据处理的输出参数类型		
 	 */

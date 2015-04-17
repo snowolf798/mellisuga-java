@@ -110,7 +110,7 @@ final class _XMLTag {
 	public static String g_NodedataType = "dataType";
 	public static String g_NodeDataType = "DataType";
 	public static String g_NodeReference = "Reference";
-	
+	public static String g_NodeAll = "All";
 	
 	
 	public static String g_NodeHead = "head";

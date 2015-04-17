@@ -49,7 +49,7 @@ public class PMParserImpl implements IPMParser {
      private String _name = null;
      private String _abstracts = null;
      private ArrayList<MParaItem> _inputs = null;
-     private ArrayList<ParaItem> _outputs = null;
+     private ArrayList<MParaItem> _outputs = null;
      private String _title = null;
      
 	@Override
@@ -122,7 +122,7 @@ public class PMParserImpl implements IPMParser {
 		return null;
 	}
 	
-	public ParaItem[] getOutputs(){
+	public MParaItem[] getOutputs(){
 		try{
 			if (!_bLoaded)
 			{
@@ -133,7 +133,7 @@ public class PMParserImpl implements IPMParser {
 				return null;
 			}
 			
-			ParaItem[] items = new ParaItem[this._outputs.size()];
+			MParaItem[] items = new MParaItem[this._outputs.size()];
 			this._outputs.toArray(items);
 			return items;
 		}
@@ -612,7 +612,8 @@ public class PMParserImpl implements IPMParser {
 			}
 			this._abstracts = nodeAbstract.getTextContent();
 			
-			NodeList inputs = nodeProcesshead.getElementsByTagName(_XMLTag.g_NodeInput);
+			Element nodeDataInputs = (Element)(nodeProcesshead.getElementsByTagName("DataInputs").item(0));
+			NodeList inputs = nodeDataInputs.getElementsByTagName(_XMLTag.g_NodeInput);
 			this._inputs = new ArrayList<MParaItem>();
 			int i = 0;
 			Element nodeInput = null;
@@ -676,6 +677,144 @@ public class PMParserImpl implements IPMParser {
 					}
 				}
 				this._inputs.add(mpi);
+			}
+			
+			NodeList all_inputs = nodeDataInputs.getElementsByTagName(_XMLTag.g_NodeAll);
+			if (all_inputs.getLength() == 1){
+				nodeInput = (Element)(all_inputs.item(0));				
+				mpi = new MParaItem("all","JSONObject");
+				references = nodeInput.getElementsByTagName(_XMLTag.g_NodeReference);
+				if (null != references){
+					com.alibaba.fastjson.JSONArray ja = new com.alibaba.fastjson.JSONArray();
+					for (j = 0; j < references.getLength(); ++j){
+						node = (Element)references.item(j);
+						mpi.addRefProcess(Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)),
+								"",
+								node.getAttribute(_XMLTag.g_AttributionName));
+						//扩展信息
+						NamedNodeMap nnm = node.getAttributes();
+	                	if (null != nnm){
+	                		com.alibaba.fastjson.JSONObject jitem = new com.alibaba.fastjson.JSONObject();
+	                		for (int m = 0; m < nnm.getLength(); ++m){
+	                			org.w3c.dom.Node an = nnm.item(m);
+	                			String astr = an.getNodeName();
+	                			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
+	                				continue;
+	                			}
+	                			jitem.put(astr, xmlConversion(an.getNodeValue()));
+	                		}
+	                		if (jitem.size() > 0){
+	                			jitem.put(_XMLTag.g_AttributionId, node.getAttribute(_XMLTag.g_AttributionId));
+	                			jitem.put(_XMLTag.g_AttributionName, node.getAttribute(_XMLTag.g_AttributionName));
+	                			ja.add(jitem);
+	                		}
+	                	}	                	
+					}
+					if (ja.size() > 0){
+						mpi.setProperty("reference", ja.toJSONString());
+					}
+				}
+				this._inputs.add(mpi);	
+			}
+			
+			Element nodeProcessOutputs = (Element)(nodeProcesshead.getElementsByTagName("ProcessOutputs").item(0));
+			NodeList outputs = nodeDataInputs.getElementsByTagName(_XMLTag.g_NodeOutput);
+			this._outputs = new ArrayList<MParaItem>();
+			Element nodeOutput = null;
+			for (i = 0; i < outputs.getLength(); ++i){
+				nodeOutput = (Element)(outputs.item(i));
+				mpi = new MParaItem("","");
+				node = (Element)(nodeOutput.getElementsByTagName(_XMLTag.g_NodeIdentifier).item(0));
+				if (null == node){
+					continue;	
+				}				
+				mpi.setName(node.getTextContent());
+				node = (Element)(nodeOutput.getElementsByTagName(_XMLTag.g_NodeTitle).item(0));
+				if (null != node){
+					mpi.setTitle(xmlConversion(node.getTextContent()));	
+				}
+				
+				node = (Element)(nodeOutput.getElementsByTagName(_XMLTag.g_NodeAbstract).item(0));
+				if (null != node){
+					mpi.setAbstracts(xmlConversion(node.getTextContent()));
+				}
+				
+				node = (Element)(nodeOutput.getElementsByTagName(_XMLTag.g_NodeDataType).item(0));
+				if (null == node){
+					continue;
+				}		 
+				mpi.setDataType(xmlConversion(node.getTextContent()));
+				
+				references = nodeOutput.getElementsByTagName(_XMLTag.g_NodeReference);
+				if (null != references){
+					com.alibaba.fastjson.JSONArray ja = new com.alibaba.fastjson.JSONArray();
+					for (j = 0; j < references.getLength(); ++j){
+						node = (Element)references.item(j);
+						mpi.addRefProcess(Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)),
+								"",
+								node.getAttribute(_XMLTag.g_AttributionName));
+						//扩展信息
+						NamedNodeMap nnm = node.getAttributes();
+	                	if (null != nnm){
+	                		com.alibaba.fastjson.JSONObject jitem = new com.alibaba.fastjson.JSONObject();
+	                		for (int m = 0; m < nnm.getLength(); ++m){
+	                			org.w3c.dom.Node an = nnm.item(m);
+	                			String astr = an.getNodeName();
+	                			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
+	                				continue;
+	                			}
+	                			jitem.put(astr, xmlConversion(an.getNodeValue()));
+	                		}
+	                		if (jitem.size() > 0){
+	                			jitem.put(_XMLTag.g_AttributionId, node.getAttribute(_XMLTag.g_AttributionId));
+	                			jitem.put(_XMLTag.g_AttributionName, node.getAttribute(_XMLTag.g_AttributionName));
+	                			ja.add(jitem);
+	                		}
+	                	}	                	
+					}
+					if (ja.size() > 0){
+						mpi.setProperty("reference", ja.toJSONString());
+					}
+				}
+				this._outputs.add(mpi);
+			}
+			
+			NodeList all_outputs = nodeProcessOutputs.getElementsByTagName(_XMLTag.g_NodeAll);
+			if (all_outputs.getLength() == 1){
+				nodeOutput = (Element)(all_outputs.item(0));				
+				mpi = new MParaItem("all","JSONObject");
+				references = nodeOutput.getElementsByTagName(_XMLTag.g_NodeReference);
+				if (null != references){
+					com.alibaba.fastjson.JSONArray ja = new com.alibaba.fastjson.JSONArray();
+					for (j = 0; j < references.getLength(); ++j){
+						node = (Element)references.item(j);
+						mpi.addRefProcess(Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)),
+								"",
+								node.getAttribute(_XMLTag.g_AttributionName));
+						//扩展信息
+						NamedNodeMap nnm = node.getAttributes();
+	                	if (null != nnm){
+	                		com.alibaba.fastjson.JSONObject jitem = new com.alibaba.fastjson.JSONObject();
+	                		for (int m = 0; m < nnm.getLength(); ++m){
+	                			org.w3c.dom.Node an = nnm.item(m);
+	                			String astr = an.getNodeName();
+	                			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
+	                				continue;
+	                			}
+	                			jitem.put(astr, xmlConversion(an.getNodeValue()));
+	                		}
+	                		if (jitem.size() > 0){
+	                			jitem.put(_XMLTag.g_AttributionId, node.getAttribute(_XMLTag.g_AttributionId));
+	                			jitem.put(_XMLTag.g_AttributionName, node.getAttribute(_XMLTag.g_AttributionName));
+	                			ja.add(jitem);
+	                		}
+	                	}	                	
+					}
+					if (ja.size() > 0){
+						mpi.setProperty("reference", ja.toJSONString());
+					}
+				}
+				this._outputs.add(mpi);	
 			}
 		}catch(Exception ex){
 			ex.printStackTrace();
@@ -761,6 +900,7 @@ public class PMParserImpl implements IPMParser {
         	return;                    	
         }
         emt = (Element) (nlist.item(0));
+        NodeList allist = emt.getElementsByTagName("all");
         nlist = emt.getElementsByTagName("input");
         
         IProcessingManager gpManager = com.mellisuga.core.InstanceManager.getInstance().processingManager();                
@@ -847,6 +987,46 @@ public class PMParserImpl implements IPMParser {
             
             minputs.add(mpi);        	
         }   
+        //all
+        if (allist.getLength() == 1){
+        	emt = (Element)(allist.item(0));
+        	if (null != emt){                    		        		        	
+        		mpi = new MParaItem("all", "JSONObject");
+        		 //reference
+                references = emt.getElementsByTagName(_XMLTag.g_NodeReference);
+    			if (null != references){
+    				com.alibaba.fastjson.JSONArray ja = new com.alibaba.fastjson.JSONArray();
+    				for (j = 0; j < references.getLength(); ++j){
+    					node = (Element)references.item(j);
+    					mpi.addRefProcess(Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)),
+    							"",
+    							node.getAttribute(_XMLTag.g_AttributionName));
+    					//扩展信息
+    					nnm = node.getAttributes();
+                    	if (null != nnm){
+                    		com.alibaba.fastjson.JSONObject jitem = new com.alibaba.fastjson.JSONObject();
+                    		for (int m = 0; m < nnm.getLength(); ++m){
+                    			org.w3c.dom.Node an = nnm.item(m);
+                    			String astr = an.getNodeName();
+                    			if (astr.equalsIgnoreCase(_XMLTag.g_AttributionId) || astr.equalsIgnoreCase(_XMLTag.g_Attribution_type) || astr.equalsIgnoreCase(_XMLTag.g_AttributionName) || astr.equalsIgnoreCase(_XMLTag.g_AttributionTitle) || astr.equalsIgnoreCase(_XMLTag.g_AttributionAbstract)){
+                    				continue;
+                    			}
+                    			jitem.put(astr, xmlConversion(an.getNodeValue()));
+                    		}
+                    		if (jitem.size() > 0){
+                    			jitem.put(_XMLTag.g_AttributionId, Integer.parseInt(node.getAttribute(_XMLTag.g_AttributionId)));
+                    			jitem.put(_XMLTag.g_AttributionName, node.getAttribute(_XMLTag.g_AttributionName));
+                    			ja.add(jitem);
+                    		}
+                    	}	                	
+    				}
+    				if (ja.size() > 0){
+    					mpi.setProperty("reference", ja.toJSONString());
+    				}
+    			}			                
+                minputs.add(mpi);
+        	}
+        }
         MParaItem[] mparas = new MParaItem[minputs.size()];
         minputs.toArray(mparas);
         group.setInputs(mparas);
@@ -858,6 +1038,7 @@ public class PMParserImpl implements IPMParser {
         	return;                    	
         }
         emt = (Element) (nlist.item(0));
+        allist = emt.getElementsByTagName("all");
         nlist = emt.getElementsByTagName("output");
         ParaItem para = null;
         for (j = 0; j < nlist.getLength(); j++){                    	
@@ -894,7 +1075,15 @@ public class PMParserImpl implements IPMParser {
             	}
             }
             piArray.add(para);                    	
-        }   
+        }
+        //all
+        if (allist.getLength() == 1){
+        	emt = (Element)(allist.item(0));
+        	if (null != emt){              
+        		para = new ParaItem("all", "JSONObject");
+        		piArray.add(para); 
+        	}
+        }
         ParaItem[] paras = new ParaItem[piArray.size()];
         piArray.toArray(paras);
         group.setOutputs(paras);

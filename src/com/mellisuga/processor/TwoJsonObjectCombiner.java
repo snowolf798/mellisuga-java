@@ -74,7 +74,7 @@ public class TwoJsonObjectCombiner extends ProcessBase {
 			String keyOne = "";
 			obj = this.getInput("KeyOne");			
 			if (obj instanceof String){
-				keyOne = (String)obj;				
+				keyOne = (String)obj;
 			}
 			
 			com.alibaba.fastjson.JSONObject js2 = null;	
