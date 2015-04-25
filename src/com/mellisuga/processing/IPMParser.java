@@ -77,7 +77,7 @@ public interface IPMParser {
 	 * 每一个{@linkplain com.mellisuga.processing.ParaItem ParaItem}对象对应模型的一个结果参数的定义，包括结果参数的名称、类型等信息。
 	 * @return 模型输出参数列表
 	 */
-	public ParaItem[] getOutputs();
+	public MParaItem[] getOutputs();
 
 	/**
 	 * 模型中数据处理构件的连接关系描述
