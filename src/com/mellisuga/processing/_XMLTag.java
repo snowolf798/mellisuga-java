@@ -58,8 +58,8 @@ final class _XMLTag {
 	 * static String^ g_NodeAssembly = "name";
 	 */
 	public static String g_NodeName = "name";
-	public static String g_NodeOutput = "output";
-	public static String g_NodeOutputs = "outputs";
+	public static String g_NodeOutput = "Output";
+	public static String g_NodeOutputs = "Outputs";
 	public static String g_NodeProcess = "process";
 	public static String g_NodeSetting = "setting";
 	public static String g_NodeSource = "source";
