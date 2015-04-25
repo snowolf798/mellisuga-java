@@ -183,166 +183,29 @@ public class ProcessIterator extends ProcessBase {
 			if (obj instanceof com.alibaba.fastjson.JSONObject){				
 				com.alibaba.fastjson.JSONObject jvar = (com.alibaba.fastjson.JSONObject)obj;
 				if (jvar.containsKey("variables")){
-					
-				}//值列表
-				else{
-					varname = jvar.getString(_XMLTag.g_AttributionName);	
-				}//数组迭代或JSON值迭代				
-			}
-			else if(obj instanceof com.alibaba.fastjson.JSONArray){
-				
-			}
-			
-			MParaItem[] mpis = gd.getInputs();
-			MParaItem mpiter = null;
-			MParaItem mpi = null;
-			ArrayList<Integer> ids = null;
-			ArrayList<String> paraNames = null;							
-			if (null != mpis){
-				boolean bFind = false;
-				int k = 0;
-				for (i = 0; i < mpis.length; ++i){					
-					mpi = mpis[i];
-					if (null == mpi){
-						continue;
-					}
-					ids = mpi.getProcessIds();
-					paraNames = mpi.getParaNames();
-					if (!args.containsKey(mpi.getName())){
-						continue;
-					}
-					
-					if (varname.equalsIgnoreCase(mpi.getName())){
-						mpiter = mpi;
-						continue;
-					}	
-					
-					String strType = mpi.getDataType();
-					if (null == strType || strType.isEmpty()){						
-						continue;
-					}
-					String[] strs = strType.split(";");
-					if (null == strs || strs.length <= 0){						
-						continue;
-					}
-					
-					obj = _gpmanager.createObject(strs[0], args.get(mpi.getName()));
-					for (k = 0; k < ids.size() && k < paraNames.size(); ++k){																
-						bFind = false;
-						p = chain.getProcessById(ids.get(k));
-						if (null == p){
-							continue;
-						}
-						bFind = p.setInputValue(paraNames.get(k), obj);
-						
-						if (!bFind){							
-							return false;
-						}
-					}
-				}				
-			}
-			
-			if (null == mpiter){
-				return false;
-			}
-			String strType = mpiter.getDataType();
-			if (null == strType || strType.isEmpty()){						
-				return false;
-			}
-			String[] strs = strType.split(";");
-			if (null == strs || strs.length <= 0){						
-				return false;
-			}				
-			com.alibaba.fastjson.JSONArray jrefs = com.alibaba.fastjson.JSON.parseArray(mpiter.getProperty("reference"));
-			
-			strType = strs[0];
-			ArrayList iterobjs = new ArrayList();
-			if (strType.equalsIgnoreCase("JSONArray")){
-				obj = _gpmanager.createObject(strType, args.get(mpiter.getName()));
-				if (!(obj instanceof com.alibaba.fastjson.JSONArray)){
-					return false;
-				}
-/*				
-				String str = jvar.getString("element");
-				if (!str.equalsIgnoreCase("..{value}")){
-					return false;
-				}
-*/
-				com.alibaba.fastjson.JSONArray ja = (com.alibaba.fastjson.JSONArray)obj;
-				for (i = 0; i < ja.size(); ++i){
-					iterobjs.add(ja.get(i));
-				}
-			}
-			else if (strType.startsWith("Array.")){
-				if (strType.equalsIgnoreCase("Array.Int") || strType.equalsIgnoreCase("Array.Integer")){
-					Integer[] items = (Integer[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.String")){
-					String[] items = (String[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Long")){
-					Long[] items = (Long[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Float")){
-					Float[] items = (Float[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Double")){
-					Double[] items = (Double[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Boolean")){
-					Boolean[] items = (Boolean[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Byte")){
-					Byte[] items = (Byte[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);				
-				}
-				else if (strType.equalsIgnoreCase("Array.Character")){
-					Character[] items = (Character[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-				else if (strType.equalsIgnoreCase("Array.Short")){
-					Short[] items = (Short[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
-					addToArray(iterobjs, items);
-				}
-			}
-			
-			ids = mpiter.getProcessIds();
-			paraNames = mpiter.getParaNames();
-			com.alibaba.fastjson.JSONObject jref = null;
-			for (i = 0; i < iterobjs.size(); ++i){
-				for (j = 0; j < ids.size() && j < paraNames.size(); ++j){
-					p = chain.getProcessById(ids.get(j));	
-					//jrefs					
-					jref = getReference(jrefs,ids.get(j),paraNames.get(j));
-					obj = iterobjs.get(i);
-					if (null != jref && jref.containsKey("part")){
-							obj = iterobjs.get(i);
-							if(!(obj instanceof com.alibaba.fastjson.JSONObject)){
-								return false;
-							}
-							com.alibaba.fastjson.JSONObject jobj = (com.alibaba.fastjson.JSONObject)obj;
-							if (!jobj.containsKey(jref.getString("part"))){
-								return false;
-							}
-							obj = jobj.get(jref.getString("part"));
-					}
-					if (!p.setInputValue(paraNames.get(j), obj)){
+					if (!setInputChainValue(_gpmanager,gd,chain,args)){
 						return false;
 					}
-				}
-				if (!chain.execute()){
+					varlist(_gpmanager,chain,jvar);
+				}//值列表
+				else{
+					//varname = jvar.getString(_XMLTag.g_AttributionName);
+					arrayIter(_gpmanager,gd,chain,args,jvar);
+				}//数组迭代或JSON值迭代
+			}
+			else if(obj instanceof com.alibaba.fastjson.JSONArray){
+/*				
+				if (!setInputChainValue(_gpmanager,gd,chain,args)){
 					return false;
 				}
+				partVarPass();*/
 			}
-			
-			mpis = gd.getOutputs();
+
+			MParaItem[] mpis = gd.getOutputs();
+			MParaItem mpi = null;
 			Object result = null;
+			ArrayList<Integer> ids = null;
+			ArrayList<String> paraNames = null;		
 			if (0 == mpis.length){
 				result = null;
 			}
@@ -406,6 +269,7 @@ public class ProcessIterator extends ProcessBase {
 				result = jo;
 			}
 			this.setInputValue("result", result);
+
 			return true;
 		}
 		catch(Exception ex){
@@ -439,9 +303,363 @@ public class ProcessIterator extends ProcessBase {
 		return jo;
 	}
 	
+	private boolean setInputChainValue(IProcessingManager _gpmanager,GroupDescription gd,IProcessChain chain,com.alibaba.fastjson.JSONObject args){
+		MParaItem[] mpis = gd.getInputs();
+		MParaItem mpi = null;
+		ArrayList<Integer> ids = null;
+		ArrayList<String> paraNames = null;	
+		int i = 0;
+		Object obj = null;
+		IProcess p = null;
+		if (null != mpis){
+			boolean bFind = false;
+			int k = 0;
+			for (i = 0; i < mpis.length; ++i){					
+				mpi = mpis[i];
+				if (null == mpi){
+					continue;
+				}
+				ids = mpi.getProcessIds();
+				paraNames = mpi.getParaNames();
+				if (!args.containsKey(mpi.getName())){
+					continue;
+				}
+				
+				String strType = mpi.getDataType();
+				if (null == strType || strType.isEmpty()){						
+					continue;
+				}
+				String[] strs = strType.split(";");
+				if (null == strs || strs.length <= 0){						
+					continue;
+				}
+				
+				obj = _gpmanager.createObject(strs[0], args.get(mpi.getName()));
+				for (k = 0; k < ids.size() && k < paraNames.size(); ++k){																
+					bFind = false;
+					p = chain.getProcessById(ids.get(k));
+					if (null == p){
+						continue;
+					}
+					bFind = p.setInputValue(paraNames.get(k), obj);
+					
+					if (!bFind){							
+						return false;
+					}
+				}
+			}				
+		}
+		return true;
+	}
+	
+	//值列表
+	private boolean varlist(IProcessingManager _gpmanager,IProcessChain chain,com.alibaba.fastjson.JSONObject jiter){
+		if (!jiter.containsKey("id") || !jiter.containsKey("name") || !jiter.containsKey("variables")){
+			return false;
+		}
+		int id = jiter.getIntValue("id");
+		String name = jiter.getString("name");
+		com.alibaba.fastjson.JSONArray vars = jiter.getJSONArray("variables");
+		if (null == vars || vars.isEmpty()){
+			return false;
+		}
+		IProcess p = chain.getProcessById(id);
+		if (null == p){
+			return false;
+		}
+		ParaItem pi = getInputPara(p,name);
+		
+		String strType = pi.getDataType();
+		String[] strs = strType.split(",");
+		strType = strs[0];				
+		for (int i = 0; i < vars.size(); ++i){
+			if (!p.setInputValue(name, _gpmanager.createObject(strType, vars.get(i)))){
+				return false;				
+			}
+			if (!chain.execute()){
+				return false;
+			}
+		}
+		return true;
+	}
+	
+	//数组迭代或JSON值迭代
+	private boolean arrayIter(IProcessingManager _gpmanager,GroupDescription gd,IProcessChain chain,com.alibaba.fastjson.JSONObject args,com.alibaba.fastjson.JSONObject jvar){
+		String varname = jvar.getString(_XMLTag.g_AttributionName);
+			
+		MParaItem[] mpis = gd.getInputs();
+		MParaItem mpiter = null;
+		MParaItem mpi = null;
+		ArrayList<Integer> ids = null;
+		ArrayList<String> paraNames = null;	
+		Object obj = null;
+		IProcess p = null;
+		int i = 0;
+		if (null != mpis){
+			boolean bFind = false;
+			int k = 0;
+			for (i = 0; i < mpis.length; ++i){					
+				mpi = mpis[i];
+				if (null == mpi){
+					continue;
+				}
+				ids = mpi.getProcessIds();
+				paraNames = mpi.getParaNames();
+				if (!args.containsKey(mpi.getName())){
+					continue;
+				}
+				
+				if (varname.equalsIgnoreCase(mpi.getName())){
+					mpiter = mpi;
+					continue;
+				}	
+				
+				String strType = mpi.getDataType();
+				if (null == strType || strType.isEmpty()){						
+					continue;
+				}
+				String[] strs = strType.split(";");
+				if (null == strs || strs.length <= 0){						
+					continue;
+				}
+				
+				obj = _gpmanager.createObject(strs[0], args.get(mpi.getName()));
+				for (k = 0; k < ids.size() && k < paraNames.size(); ++k){																
+					bFind = false;
+					p = chain.getProcessById(ids.get(k));
+					if (null == p){
+						continue;
+					}
+					bFind = p.setInputValue(paraNames.get(k), obj);
+					
+					if (!bFind){							
+						return false;
+					}
+				}
+			}				
+		}
+		
+		if (null == mpiter){
+			return false;
+		}
+		String strType = mpiter.getDataType();
+		if (null == strType || strType.isEmpty()){						
+			return false;
+		}
+		String[] strs = strType.split(";");
+		if (null == strs || strs.length <= 0){						
+			return false;
+		}				
+		com.alibaba.fastjson.JSONArray jrefs = com.alibaba.fastjson.JSON.parseArray(mpiter.getProperty("reference"));
+		
+		strType = strs[0];
+		ArrayList iterobjs = new ArrayList();
+		if (strType.equalsIgnoreCase("JSONArray")){
+			obj = _gpmanager.createObject(strType, args.get(mpiter.getName()));
+			if (!(obj instanceof com.alibaba.fastjson.JSONArray)){
+				return false;
+			}
+			
+			String str = jvar.getString("element");
+			if (!str.equalsIgnoreCase("..{value}")){
+				return false;
+			}
+
+			com.alibaba.fastjson.JSONArray ja = (com.alibaba.fastjson.JSONArray)obj;
+			for (i = 0; i < ja.size(); ++i){
+				iterobjs.add(ja.get(i));
+			}
+		}
+		else if (strType.startsWith("Array.")){
+			if (strType.equalsIgnoreCase("Array.Int") || strType.equalsIgnoreCase("Array.Integer")){
+				Integer[] items = (Integer[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.String")){
+				String[] items = (String[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Long")){
+				Long[] items = (Long[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Float")){
+				Float[] items = (Float[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Double")){
+				Double[] items = (Double[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Boolean")){
+				Boolean[] items = (Boolean[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Byte")){
+				Byte[] items = (Byte[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);				
+			}
+			else if (strType.equalsIgnoreCase("Array.Character")){
+				Character[] items = (Character[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+			else if (strType.equalsIgnoreCase("Array.Short")){
+				Short[] items = (Short[])(_gpmanager.createObject(strType, args.get(mpiter.getName())));					
+				addToArray(iterobjs, items);
+			}
+		}
+		
+		ids = mpiter.getProcessIds();
+		paraNames = mpiter.getParaNames();
+		com.alibaba.fastjson.JSONObject jref = null;
+		int j = 0;
+		for (i = 0; i < iterobjs.size(); ++i){
+			for (j = 0; j < ids.size() && j < paraNames.size(); ++j){
+				p = chain.getProcessById(ids.get(j));	
+				//jrefs					
+				jref = getReference(jrefs,ids.get(j),paraNames.get(j));
+				obj = iterobjs.get(i);
+				if (null != jref && jref.containsKey("part")){
+						obj = iterobjs.get(i);
+						if(!(obj instanceof com.alibaba.fastjson.JSONObject)){
+							return false;
+						}
+						com.alibaba.fastjson.JSONObject jobj = (com.alibaba.fastjson.JSONObject)obj;
+						if (!jobj.containsKey(jref.getString("part"))){
+							return false;
+						}
+						obj = jobj.get(jref.getString("part"));
+				}
+				if (!p.setInputValue(paraNames.get(j), obj)){
+					return false;
+				}
+			}
+			if (!chain.execute()){
+				return false;
+			}
+		}
+/*		
+		mpis = gd.getOutputs();
+		Object result = null;
+		if (0 == mpis.length){
+			result = null;
+		}
+		else if (1 == mpis.length){
+			mpi = mpis[0];
+			ids = mpi.getProcessIds();
+			paraNames = mpi.getParaNames();
+			if (0 == ids.size() || 0 == paraNames.size()){
+				result = null;
+			}
+			else if (1 == ids.size()){
+				p = chain.getProcessById(ids.get(0));
+				if (null == p){
+					return false;
+				}					
+				result = p.getOutputValue(paraNames.get(0));
+			}
+			else{
+				com.alibaba.fastjson.JSONObject jo = new com.alibaba.fastjson.JSONObject();
+				for (i = 0; i < ids.size() && i < paraNames.size(); ++i){
+					p = chain.getProcessById(ids.get(i));
+					obj = p.getOutputValue(paraNames.get(i));
+					if (null == p || null == obj){
+						return false;
+					}					
+					jo.put(paraNames.get(i), obj);
+				}
+				result = jo;
+			}
+		}
+		else{
+			com.alibaba.fastjson.JSONObject jo = new com.alibaba.fastjson.JSONObject();
+			for (i = 0; i < mpis.length; ++i){
+				mpi = mpis[i];
+				ids = mpi.getProcessIds();
+				paraNames = mpi.getParaNames();
+				if (0 == ids.size() || 0 == paraNames.size()){
+					return false;
+				}
+				else if (1 == ids.size()){
+					p = chain.getProcessById(ids.get(0));
+					if (null == p){
+						return false;
+					}					
+					result = p.getOutputValue(paraNames.get(0));
+					jo.put(mpi.getName(), result);
+				}
+				else{
+					com.alibaba.fastjson.JSONObject jsub = new com.alibaba.fastjson.JSONObject();
+					for (j = 0; j < ids.size() && j < paraNames.size(); ++j){
+						p = chain.getProcessById(ids.get(j));
+						obj = p.getOutputValue(paraNames.get(j));
+						if (null == p || null == obj){
+							return false;
+						}					
+						jsub.put(paraNames.get(j), obj);
+					}
+					jo.put(mpi.getName(), jsub);
+				}
+			}
+			result = jo;
+		}
+		this.setInputValue("result", result);
+*/		
+		return true;
+    }	
+/*	
+	//部分值传递
+	private boolean partVarPass(GroupDescription gd,com.alibaba.fastjson.JSONObject args,com.alibaba.fastjson.JSONArray jiters){
+    	//部分值传递
+    	//{
+    	//  "iterator": [{
+    	//	  "name": "d3",
+    	//	  "part": "fd"
+    	//  },
+    	//  {
+    	//	  "name": "dw",
+    	//	  "part": "gd"
+    	//  }]
+    	//}
+		MParaItem[] mpis = gd.getInputs();
+		if (null == mpis){
+			return false;
+		}
+		
+		com.alibaba.fastjson.JSONObject jiter = null;
+		for (int i = 0; i < jiters.size(); ++ i){
+			jiter = jiters.getJSONObject(i);
+			if (!jiter.containsKey("name") || !jiter.containsKey("part")){
+				return false;
+			}
+		}
+		
+		MParaItem mpi = null;
+		ArrayList<Integer> ids = null;
+		ArrayList<String> paraNames = null;	
+		Object obj = null;
+		IProcess p = null;
+		int i = 0;
+
+	}
+*/	
+	
 	public <T> void addToArray(ArrayList arrsy, T[] items) {	
 		for (int j = 0; j < items.length; ++j){
 			arrsy.add(items[j]);
 		}	
+	}
+	
+	private ParaItem getInputPara(IProcess p,String name){
+		ParaItem pi = null;
+		ParaItem [] pis = p.inputSet();
+		for (int i = 0; i < pis.length; ++i){
+			pi = pis[i];
+			if (name.equalsIgnoreCase(pi.getName())){
+				break;
+			}
+			pi = null;
+		}
+		return pi;
 	}
 }

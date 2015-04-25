@@ -330,6 +330,11 @@ public class JsonObjectCombiner implements IProcess {
 	public void setData(Object obj){
 		
 	}
+	
+	@Override
+	public Object getData(){
+		return null;
+	}
 
 	private com.alibaba.fastjson.JSONObject combiner(com.alibaba.fastjson.JSONObject js, com.alibaba.fastjson.JSONObject append){
 		if (null == append || append.size() <= 0){

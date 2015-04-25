@@ -98,15 +98,21 @@ public class PMDispatcherImpl implements IPMDispatcher {
 				Object obj = null;
 				int k = 0;
 				ArrayList<Integer> ids = null;
-				ArrayList<String> paraNames = null;				
+				ArrayList<String> paraNames = null;
+				MParaItem mpi_all = null;
+				com.alibaba.fastjson.JSONObject js_all = new com.alibaba.fastjson.JSONObject();
 				for (i = 0; i < mpis.length; ++i){					
 					mpi = mpis[i];
 					if (null == mpi){
 						continue;
 					}
+					if (mpi.getName().equalsIgnoreCase("all")){
+						mpi_all = mpi;
+						continue;
+					}
 					ids = mpi.getProcessIds();
 					paraNames = mpi.getParaNames();
-					if (!parameters.containsKey(mpi.getName())){
+					if (!parameters.containsKey(mpi.getName())){						
 						continue;
 					}		
 					
@@ -120,6 +126,7 @@ public class PMDispatcherImpl implements IPMDispatcher {
 					}
 					
 					obj = _gpmanager.createObject(strs[0], parameters.get(mpi.getName()));
+					js_all.put(mpi.getName(), obj);
 					for (k = 0; k < ids.size() && k < paraNames.size(); ++k){																
 						bFind = false;
 						for (j = 0; j < this._chains.size(); ++j){						
@@ -141,7 +148,12 @@ public class PMDispatcherImpl implements IPMDispatcher {
 							return null;
 						}
 					}
-				}				
+				}
+				if (null != mpi_all){
+					if (!setAllInput(mpi_all,js_all)){
+						return false;
+					}
+				}
 			}
 			
 			for (i = 0; i < this._chains.size(); ++i){				
@@ -382,12 +394,19 @@ public class PMDispatcherImpl implements IPMDispatcher {
 				boolean bFind = false;
 				ArrayList<Integer> ids = null;
 				ArrayList<String> paraNames = null;
+				MParaItem mpi_all = null;
+				com.alibaba.fastjson.JSONObject js_all = new com.alibaba.fastjson.JSONObject();
 				int k = 0;
 				for (i = 0; i < mpis.length; ++i){					
 					mpi = mpis[i];
 					if (null == mpi){
 						continue;
 					}
+					if (mpi.getName().equalsIgnoreCase("all")){
+						mpi_all = mpi;
+						continue;
+					}
+					js_all.put(mpi.getName(), args[i]);
 					ids = mpi.getProcessIds();
 					paraNames = mpi.getParaNames();
 					for (k = 0; k < ids.size() && k < paraNames.size(); ++k){
@@ -409,6 +428,11 @@ public class PMDispatcherImpl implements IPMDispatcher {
 						if (!bFind){			
 							return null;
 						}
+					}
+				}
+				if (null != mpi_all){
+					if (!setAllInput(mpi_all,js_all)){
+						return false;
 					}
 				}
 			}
@@ -504,6 +528,35 @@ public class PMDispatcherImpl implements IPMDispatcher {
 			error(ex.getMessage());
 		}
 		return null;
+	}
+	
+	private boolean setAllInput(MParaItem mpi_all,com.alibaba.fastjson.JSONObject js_all){
+		ArrayList<Integer> ids = mpi_all.getProcessIds();
+		ArrayList<String> paraNames = mpi_all.getParaNames();
+		IProcessChain chain = null;
+		boolean bFind = true;
+		IProcess p = null;
+		for (int k = 0; k < ids.size() && k < paraNames.size(); ++k){
+			bFind = false;
+			for (int j = 0; j < this._chains.size(); ++j){						
+				chain = this._chains.get(j);
+				if (null == chain){
+					//输出提示信息
+					continue;
+				}
+										
+				p = chain.getProcessById(ids.get(k));
+				if (null == p){
+					continue;
+				}
+				bFind = p.setInputValue(paraNames.get(k), js_all);
+			}
+			
+			if (!bFind){			
+				return false;
+			}
+		}
+		return true;
 	}
 
 	private static void error(String message){

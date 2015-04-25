@@ -403,6 +403,7 @@ public class ProcessChainImpl implements IProcessChain {
 				error("处理链为空");
 			}
 			IProcess p = null;
+			Object obj = null;
 			int i = 0;
 			for (; i < _chainPool.size(); ++i){
 				p = _chainPool.get(i);
@@ -410,6 +411,33 @@ public class ProcessChainImpl implements IProcessChain {
 					info("第" + i + "个节点为空");
 					continue;
 				}
+/*				
+				obj = p.getData();
+				if (obj instanceof GroupDescription){
+					GroupDescription gd = (GroupDescription)obj;
+					MParaItem[] mpis = gd.getInputs();
+					MParaItem mpi_all = null;
+					com.alibaba.fastjson.JSONObject js_all = new com.alibaba.fastjson.JSONObject();
+					MParaItem mpi = null;
+					for (int j = 0; j < mpis.length; ++j){					
+						mpi = mpis[j];
+						if (null == mpi){
+							continue;
+						}
+						if (mpi.getName().equalsIgnoreCase("all")){
+							mpi_all = mpi;
+							continue;
+						}
+						if (!(p instanceof ProcessBase)){
+							break;
+						}
+						js_all.put(mpi.getName(), ((ProcessBase)p).getInputValue(mpi.getName()));						
+					}
+					if (!js_all.isEmpty()){
+						p.setInputValue("all", js_all);
+					}
+				}
+*/				
 				if (!p.execute()){
 					error("id为" + p.getid() + "名字为'" + p.name() + "'的节点执行失败");
 					return false;
@@ -481,5 +509,11 @@ public class ProcessChainImpl implements IProcessChain {
 		else{
 			System.out.println("INFO: " + message);
 		}
+	}
+
+	@Override
+	public Object getData() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -718,7 +718,7 @@ public class PMParserImpl implements IPMParser {
 			}
 			
 			Element nodeProcessOutputs = (Element)(nodeProcesshead.getElementsByTagName("ProcessOutputs").item(0));
-			NodeList outputs = nodeDataInputs.getElementsByTagName(_XMLTag.g_NodeOutput);
+			NodeList outputs = nodeProcessOutputs.getElementsByTagName(_XMLTag.g_NodeOutput);
 			this._outputs = new ArrayList<MParaItem>();
 			Element nodeOutput = null;
 			for (i = 0; i < outputs.getLength(); ++i){
@@ -841,7 +841,14 @@ public class PMParserImpl implements IPMParser {
 	        com.alibaba.fastjson.JSONArray jsa = new com.alibaba.fastjson.JSONArray();
 	        com.alibaba.fastjson.JSONObject jvars = new com.alibaba.fastjson.JSONObject();
 	        for (int j = 0; j < nlist.getLength(); ++j){
-	        	emt = (Element)nlist.item(j);	        	
+	        	emt = (Element)nlist.item(j);	
+				//数组迭代或JSON值迭代
+				//{
+				//  "iterator": {
+				//    "name": "dd",
+				//    "element": "de"
+			    //  }
+		        //}
 	        	if (emt.hasAttribute(_XMLTag.g_AttributionName) && emt.hasAttribute(_XMLTag.g_Attribution_element)){                
 	        		com.alibaba.fastjson.JSONObject jsvar = new com.alibaba.fastjson.JSONObject();
 		        	jsvar.put(_XMLTag.g_AttributionName, emt.getAttribute(_XMLTag.g_AttributionName));
@@ -849,12 +856,32 @@ public class PMParserImpl implements IPMParser {
 		        	group.put("iterator", jsvar);
 		        	break;//应该只有一个吧，有多个了再修改;                    	
 		        }//数组迭代或JSON值迭代
+	        	//部分值传递
+	        	//{
+	        	//  "iterator": [{
+	        	//	  "name": "d3",
+	        	//	  "part": "fd"
+	        	//  },
+	        	//  {
+	        	//	  "name": "dw",
+	        	//	  "part": "gd"
+	        	//  }]
+	        	//}
 	        	else if (emt.hasAttribute(_XMLTag.g_AttributionName) && emt.hasAttribute("part")){
 	        		com.alibaba.fastjson.JSONObject jsvar = new com.alibaba.fastjson.JSONObject();
 		        	jsvar.put(_XMLTag.g_AttributionName, emt.getAttribute(_XMLTag.g_AttributionName));
 		        	jsvar.put("part", xmlConversion(emt.getAttribute("part")));
 		        	jsa.add(jsvar);
 	        	}//部分值传递
+	        	//值列表
+	        	//{
+	        	//  "iterator": {
+	        	//	  "id": 4,
+	        	//	  "name": "de",
+	        	//	  "variables": ["fr",
+	        	//	  "hy"]
+	        	//  }
+	            //}
 	        	else if(!emt.getTextContent().isEmpty()){
 	        		if (jvars.isEmpty()){
 	        			if (!vars.hasAttribute(_XMLTag.g_AttributionId) || !vars.hasAttribute(_XMLTag.g_AttributionName)){
@@ -1385,6 +1412,7 @@ public class PMParserImpl implements IPMParser {
 	}
 
 	private String xmlConversion(String str){
+		str.replaceAll("&lt;br&gt;", "\n");
 		str.replaceAll("&gt;", ">");
 		str.replaceAll("&lt;", "<");
 		str.replaceAll("&quot;", "\"");

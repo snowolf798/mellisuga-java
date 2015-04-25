@@ -230,4 +230,6 @@ public interface IProcess extends IFilter {
 	public boolean execute();
 	
 	public void setData(Object obj);
+	
+	public Object getData();
 }

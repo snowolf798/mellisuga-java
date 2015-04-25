@@ -57,6 +57,7 @@ public abstract class ProcessBase implements IProcess {
 	private Map<String, Object> _imports = new HashMap<String, Object>();	
 	private List<ParaItem> _parametersInput = new ArrayList<ParaItem>();
 	private List<ParaItem> _parametersOutput = new ArrayList<ParaItem>();	
+	private Object _obj = null;
 
 	/**
 	 * 默认构造函数
@@ -216,6 +217,17 @@ public abstract class ProcessBase implements IProcess {
 			return null;
 		}
 		try{
+			if (parameter.equalsIgnoreCase("all")){
+				com.alibaba.fastjson.JSONObject js_all = new com.alibaba.fastjson.JSONObject();
+				Set<String> keys = this._exports.keySet();
+				java.util.Iterator<String> it = keys.iterator();
+				String name = "";
+				while (it.hasNext()){
+					name = it.next();
+					js_all.put(name, this._exports.get(name));
+				}
+				return js_all;
+			}
 	        return this._exports.get(parameter);
         }
         catch(Exception e){     
@@ -266,7 +278,13 @@ public abstract class ProcessBase implements IProcess {
 	public abstract IProcess clone();
 
 	@Override
-	public void setData(Object obj){		
+	public void setData(Object obj){	
+		_obj = obj;
+	}
+	
+	@Override
+	public Object getData(){
+		return _obj;
 	}
 	
 	/**
@@ -439,6 +457,8 @@ public abstract class ProcessBase implements IProcess {
 			int i = 0;
 			String str = null;
 			IConnector c = null;
+			IConnector call = null;
+			ArrayList<IConnector> calls = new ArrayList<IConnector>();
 			boolean isFind = false;
 			for (i = 0; i < this._outgoingKeys.size() && i < this._outgoingConnectors.size(); ++i){
 				str = this._outgoingKeys.get(i);
@@ -449,7 +469,22 @@ public abstract class ProcessBase implements IProcess {
 						c.push(obj);						
 					}
 				}
+				else if (str.equalsIgnoreCase("all")){
+					call = this._outgoingConnectors.get(i);
+					if (null != call){
+						calls.add(call);						
+					}
+				}
 			}
+			
+			if (parameter.equalsIgnoreCase("all")){
+				js_all.put(parameter, obj);
+				for (i = 0; i < calls.size(); ++i){
+					call = calls.get(i);
+					call.push(js_all);
+				}
+			}
+			
 			if (!isFind){
 				this._exports.put(parameter, obj);
 			}			
@@ -469,4 +504,6 @@ public abstract class ProcessBase implements IProcess {
         }   
 		return null;
 	}
+	
+	private com.alibaba.fastjson.JSONObject js_all = new com.alibaba.fastjson.JSONObject();
 }
